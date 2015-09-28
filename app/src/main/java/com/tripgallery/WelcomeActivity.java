@@ -47,8 +47,8 @@ public class WelcomeActivity extends AppCompatActivity {
         sharedPreferences       = getSharedPreferences(getString(R.string.auth_prefs), MODE_PRIVATE);
         String userId = sharedPreferences.getString("user_id", "");
         if (!userId.equals("")) { // user already logged in
-            // TODO: send user to Main Activity
             Log.d(BuildVars.LOG_TAG, "user already logged in; user id: " + userId);
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         }
 
@@ -109,7 +109,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
                             Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
-                            // TODO: send user to Main Activity
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
 
                         } else {
                             if (e.getCode() == ParseException.OBJECT_NOT_FOUND) { // User is new to our app with this twitter user id
@@ -132,7 +133,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
                                             progressBar.setVisibility(View.GONE);
                                             Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
-                                            // TODO: send user to Main Activity
+                                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            finish();
                                         } else {
                                             Log.e(BuildVars.LOG_TAG, "can't save the new user to parse");
                                             e.printStackTrace();

@@ -47,18 +47,19 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.1'
 
-    compile 'com.kbeanie:image-chooser-library:1.5.0@aar'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
 
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
 
-    compile 'com.parse.bolts:bolts-android:1.2.0'
     compile('com.twitter.sdk.android:twitter:1.8.0@aar') {
         transitive = true;
     }
 
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.kbeanie:image-chooser-library:1.5.0@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
+    compile 'com.parse.bolts:bolts-android:1.2.0'
+    compile 'com.android.support:design:22.2.1'
 }
