@@ -54,4 +54,6 @@ dependencies {
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
 
+    compile 'com.parse.bolts:bolts-android:1.2.0'
+
 }
