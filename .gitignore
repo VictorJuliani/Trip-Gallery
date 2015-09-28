@@ -5,3 +5,5 @@
 .DS_Store
 /build
 /captures
+.idea/misc.xml
+app/app.iml
