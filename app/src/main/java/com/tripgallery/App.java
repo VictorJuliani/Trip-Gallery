@@ -1,11 +1,13 @@
 package com.tripgallery;
 
+import android.app.Application;
+
 import com.parse.Parse;
 
 /**
  * Created by matheus on 9/28/15.
  */
-public class Application extends android.app.Application {
+public class App extends Application {
 
     @Override
     public void onCreate() {
