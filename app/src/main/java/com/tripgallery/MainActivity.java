@@ -1,29 +1,32 @@
 package com.tripgallery;
 
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+@EActivity(R.layout.activity_main)
+public class MainActivity extends AppCompatActivity
+{
+	@ViewById
+	protected Toolbar toolbar;
+	@ViewById
+	protected FloatingActionButton fab;
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "^~^", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
+	@AfterViews
+	protected void setToolbar()
+	{
+		setSupportActionBar(toolbar);
+	}
 
+	@Click(R.id.fab)
+	protected void snackAction()
+	{
+		Snackbar.make(fab, "^~^", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+	}
 }
