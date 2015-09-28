@@ -1,4 +1,22 @@
 apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+def AAVersion = '3.2'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+    }
+}
+
+apt {
+    arguments {
+        androidManifestFile variant.outputs[0].processResources.manifestFile
+        resourcePackageName 'com.tripgallery'
+    }
+}
 
 android {
     compileSdkVersion 22
@@ -17,9 +35,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    repositories {
+        maven {
+            url "https://jitpack.io"
+        }
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.kbeanie:image-chooser-library:1.5.0@aar'
+    apt "org.androidannotations:androidannotations:$AAVersion"
+    compile "org.androidannotations:androidannotations-api:$AAVersion"
+
 }
