@@ -7,13 +7,14 @@ import com.parse.Parse;
 /**
  * Created by matheus on 9/28/15.
  */
-public class App extends Application {
+public class App extends Application
+{
+	@Override
+	public void onCreate()
+	{
+		super.onCreate();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "43YBy74RtUb5ElhlkkaG048nj1zzI7JBacVybyHg", "mKuQfCQT1HXnYwzNLUMuYbaYofCTUeSqyhyWpcPC");
-    }
+		Parse.enableLocalDatastore(this);
+		Parse.initialize(this, "43YBy74RtUb5ElhlkkaG048nj1zzI7JBacVybyHg", "mKuQfCQT1HXnYwzNLUMuYbaYofCTUeSqyhyWpcPC");
+	}
 }

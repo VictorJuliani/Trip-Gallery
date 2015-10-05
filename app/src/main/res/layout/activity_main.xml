@@ -6,6 +6,13 @@
     android:fitsSystemWindows="true" android:orientation="vertical"
     tools:context="com.tripgallery.MainActivity">
 
+    <TextView
+        android:id="@+id/provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Provider"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="30dp"/>
 
     <TextView
         android:id="@+id/lbl_longitude"
