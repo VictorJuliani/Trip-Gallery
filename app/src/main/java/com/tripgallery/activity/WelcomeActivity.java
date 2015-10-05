@@ -1,4 +1,4 @@
-package com.tripgallery;
+package com.tripgallery.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +22,9 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.tripgallery.BuildVars;
+import com.tripgallery.MainActivity_;
+import com.tripgallery.R;
 import com.tripgallery.manager.PreferenceManager_;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;

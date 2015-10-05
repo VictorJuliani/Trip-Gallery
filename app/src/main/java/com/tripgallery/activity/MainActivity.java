@@ -1,4 +1,4 @@
-package com.tripgallery;
+package com.tripgallery.activity;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.tripgallery.R;
 import com.tripgallery.manager.LocManager;
 
 import org.androidannotations.annotations.AfterViews;
