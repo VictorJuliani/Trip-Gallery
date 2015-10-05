@@ -11,4 +11,7 @@
     <string name="turn_on_gps">Ative a localização para maior precisão dos dados.</string>
     <string name="activate">Ativar</string>
     <string name="cancel">Cancelar</string>
+
+    <string name="take_picture">Tirar foto</string>
+    <string name="choose_picture">Escolher foto</string>
 </resources>

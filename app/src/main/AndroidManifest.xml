@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -22,7 +25,7 @@
             android:value="e7fe5c01b610d01fca6b3739ccd6266362f99215"/>
 
         <activity
-            android:name=".WelcomeActivity_"
+            android:name=".activity.WelcomeActivity_"
             android:label="@string/title_activity_welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -31,7 +34,7 @@
         </activity>
 
         <activity
-            android:name=".MainActivity_"
+            android:name=".activity.MainActivity_"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

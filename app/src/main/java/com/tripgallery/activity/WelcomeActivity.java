@@ -23,7 +23,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.tripgallery.BuildVars;
-import com.tripgallery.MainActivity_;
 import com.tripgallery.R;
 import com.tripgallery.manager.PreferenceManager_;
 import com.twitter.sdk.android.Twitter;
