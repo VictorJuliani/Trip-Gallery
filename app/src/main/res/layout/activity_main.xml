@@ -6,29 +6,7 @@
     android:fitsSystemWindows="true" android:orientation="vertical"
     tools:context="com.tripgallery.activity.MainActivity">
 
-    <TextView
-        android:id="@+id/provider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Provider"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="30dp"/>
 
-    <TextView
-        android:id="@+id/lbl_longitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Y"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="30dp"/>
-
-    <TextView
-        android:id="@+id/lbl_latidude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="X"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="30dp"/>
 
 
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
@@ -37,5 +15,11 @@
                                                         android:layout_gravity="bottom|end"
                                                         android:layout_margin="@dimen/fab_margin"
                                                         android:src="@drawable/fab_icons"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
