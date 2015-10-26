@@ -5,7 +5,7 @@ import org.androidannotations.annotations.sharedpreferences.SharedPref;
 /**
  * @author Victor
  */
-@SharedPref
+@SharedPref(value = SharedPref.Scope.APPLICATION_DEFAULT)
 public interface PreferenceManager
 {
 	public String userId();
