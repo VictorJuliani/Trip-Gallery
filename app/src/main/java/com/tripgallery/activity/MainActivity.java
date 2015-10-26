@@ -1,5 +1,6 @@
 package com.tripgallery.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,10 +9,14 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.ParseException;
@@ -30,6 +35,7 @@ import com.tripgallery.util.PhotoPicker;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
@@ -42,17 +48,28 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements LocationListener, ImageSelectedCallback
 {
 	@ViewById
-	protected FloatingActionButton fab;
+	protected Button publishBtn;
 
-    @ViewById
-    protected ImageView imageView2;
+	@ViewById
+	protected ImageView publishImg;
+
+	@ViewById
+	protected LinearLayout photoInfo;
+
+	@ViewById
+	protected EditText tagTxt;
+
+	@ViewById
+	protected EditText locTxt;
+
+	@Pref
+	protected PreferenceManager_ preferences;
 
 	private PhotoPicker picker;
-
-    @Pref
-    protected PreferenceManager_ preferences;
-
-    private Location currentLocation;
+	@InstanceState
+	private Location currentLocation;
+	@InstanceState
+	private String cityName;
 
 	@AfterViews
 	protected void setup()
@@ -93,69 +110,139 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@Override
 	public void handleImage(ChosenImage image)
 	{
-        Bitmap bitMap = BitmapFactory.decodeFile(image.getFilePathOriginal());
-        imageView2.setImageBitmap(BitmapFactory.decodeFile(image.getFileThumbnailSmall()));
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        final ParseFile file;
+		photoInfo.setVisibility(View.VISIBLE);
+		Bitmap bitMap = BitmapFactory.decodeFile(image.getFilePathOriginal());
+		publishImg.setImageBitmap(BitmapFactory.decodeFile(image.getFileThumbnailSmall()));
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		final ParseFile file;
 
-        bitMap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
-        file = new ParseFile(uuid, stream.toByteArray());
+		bitMap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+		file = new ParseFile(uuid, stream.toByteArray());
 
-        file.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                ParseObject object = new ParseObject("Photo");
-                object.put("ownerId", preferences.userId().get());
-                object.put("file", file);
-                object.put("location", new ParseGeoPoint(currentLocation.getLatitude(),
-                                                         currentLocation.getLongitude()));
-                object.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        Log.d(BuildVars.LOG_TAG, getResources().getString(R.string.photo_upload_success));
-                        Log.d(BuildVars.LOG_TAG, file.getUrl());
-                    }
-                });
+		ParseGeoPoint point = null;
+		if (!TextUtils.isEmpty(cityName) && !cityName.equals(locTxt.getText().toString()))
+		{
+			Address addr = getLocationByCity();
 
-            }
-        }, new ProgressCallback() {
-            @Override
-            public void done(Integer integer) {
-                Log.d(BuildVars.LOG_TAG, integer.toString());
-            }
-        });
+			if (addr == null)
+				showLocErrorMsg();
+			else
+				point = new ParseGeoPoint(addr.getLatitude(), addr.getLongitude());
+		}
 
-    }
+		if (point == null && currentLocation != null)
+			point = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+		else
+			showLocErrorMsg();
+
+		final ParseGeoPoint finalPoint = point;
+		file.saveInBackground(new SaveCallback()
+		{
+			@Override
+			public void done(ParseException e)
+			{
+				ParseObject object = new ParseObject("Photo");
+				object.put("ownerId", preferences.userId().get());
+				object.put("file", file);
+
+				object.put("cityName", finalPoint);
+				if (TextUtils.isEmpty(tagTxt.getText()))
+					object.put("tags", tagTxt.getText());
+				else
+					object.put("tags", "");
+
+				object.saveInBackground(new SaveCallback()
+				{
+					@Override
+					public void done(ParseException e)
+					{
+						Log.d(BuildVars.LOG_TAG, getResources().getString(R.string.photo_upload_success));
+						Log.d(BuildVars.LOG_TAG, file.getUrl());
+					}
+				});
+
+			}
+		}, new ProgressCallback()
+		{
+			@Override
+			public void done(Integer integer)
+			{
+				Log.d(BuildVars.LOG_TAG, integer.toString());
+			}
+		});
+	}
 
 	public void onLocationChanged(Location location)
 	{
-        this.currentLocation = location;
-		String cityName = null;
-		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-		List<Address> addressList;
-		try {
-			addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-			if(addressList.size() > 0) {
-				Log.d("TG", addressList.get(0).getLocality());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		this.currentLocation = location;
+		if (TextUtils.isEmpty(locTxt.getText()))
+		{
+			cityName = getCityByLocation();
+			locTxt.setText(cityName);
 		}
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras)
 	{
-		// TODO
+		// ignore?
 	}
 
 	public void onProviderEnabled(String provider)
 	{
-		// TODO
+		// ignore
 	}
 
 	public void onProviderDisabled(String provider)
 	{
-		// TODO
+		// ignore
+	}
+
+	private String getCityByLocation()
+	{
+		if (currentLocation == null)
+			return null;
+
+		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+		List<Address> addressList;
+		try
+		{
+			addressList = geocoder.getFromLocation(currentLocation.getLatitude(), currentLocation.getLongitude(), 1);
+			if (addressList.size() > 0)
+				return addressList.get(0).getLocality();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	private Address getLocationByCity()
+	{
+		if (TextUtils.isEmpty(locTxt.getText()))
+			return null;
+
+		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+		List<Address> addressList;
+		try
+		{
+			addressList = geocoder.getFromLocationName(locTxt.getText().toString(), 1);
+			if (addressList.size() > 0)
+				return addressList.get(0);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	private void showLocErrorMsg()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setCancelable(true).setMessage(R.string.badLoc);
+		builder.create().show();
 	}
 }

@@ -15,4 +15,8 @@
     <string name="take_picture">Tirar foto</string>
     <string name="choose_picture">Escolher foto</string>
     <string name="photo_upload_success">Done! Photo uploaded with success ^~^</string>
+    <string name="publish">Publicar</string>
+    <string name="tags">Tags</string>
+    <string name="loc">Localização</string>
+    <string name="badLoc">Localização inválida :(</string>
 </resources>
