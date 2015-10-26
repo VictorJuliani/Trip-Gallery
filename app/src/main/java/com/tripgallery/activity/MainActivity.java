@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.ParseException;
@@ -80,10 +81,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 		LocManager loc = new LocManager(this, this);
 		loc.start();
-
-        Log.d(BuildVars.LOG_TAG, "---");
-        Log.d(BuildVars.LOG_TAG, preferences.userId().get());
-        Log.d(BuildVars.LOG_TAG, "---");
     }
 
 	@Override
@@ -152,9 +149,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 				object.put("ownerId", preferences.userId().get());
 				object.put("file", file);
 
-				object.put("cityName", finalPoint);
-				if (TextUtils.isEmpty(tagTxt.getText()))
-					object.put("tags", tagTxt.getText());
+				object.put("location", finalPoint);
+				if (!TextUtils.isEmpty(tagTxt.getText()))
+					object.put("tags", tagTxt.getText().toString());
 				else
 					object.put("tags", "");
 
@@ -163,8 +160,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 					@Override
 					public void done(ParseException e)
 					{
-						Log.d(BuildVars.LOG_TAG, getResources().getString(R.string.photo_upload_success));
-						Log.d(BuildVars.LOG_TAG, file.getUrl());
+                        if(e != null) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),R.string.something_went_wrong,
+                                           Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Log.d(BuildVars.LOG_TAG, getResources().getString(R.string.photo_upload_success));
+                            Log.d(BuildVars.LOG_TAG, file.getUrl());
+                        }
 					}
 				});
 
