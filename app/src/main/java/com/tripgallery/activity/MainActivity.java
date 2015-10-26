@@ -66,10 +66,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	protected PreferenceManager_ preferences;
 
 	private PhotoPicker picker;
-	@InstanceState
-	private Location currentLocation;
-	@InstanceState
-	private String cityName;
+
+    @InstanceState
+	protected Location currentLocation;
+
+    @InstanceState
+	protected String cityName;
 
 	@AfterViews
 	protected void setup()
@@ -78,7 +80,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 		LocManager loc = new LocManager(this, this);
 		loc.start();
-	}
+
+        Log.d(BuildVars.LOG_TAG, "---");
+        Log.d(BuildVars.LOG_TAG, preferences.userId().get());
+        Log.d(BuildVars.LOG_TAG, "---");
+    }
 
 	@Override
 	public void onSaveInstanceState(Bundle outState)
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		picker.onActivityResult(requestCode, resultCode, data);
 	}
 
-	@Click(R.id.fab)
+	@Click(R.id.publishBtn)
 	protected void pickPhoto()
 	{
 		PhotoPicker.showPhotoPickDialog(this, picker);
