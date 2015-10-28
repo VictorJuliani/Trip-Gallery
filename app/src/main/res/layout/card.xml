@@ -21,13 +21,80 @@
             android:id="@+id/photo"
             android:src="@drawable/example"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_above="@+id/relativeLayout"
+            android:layout_centerHorizontal="true">
+            <View
+                android:id="@+id/subtitleBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/rectangle"
+                android:alpha="0.5" />
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:id="@+id/locationIcon"
+                android:src="@drawable/ic_location"
+                android:tint="@android:color/darker_gray"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="São Carlos"
+                android:textColor="@android:color/darker_gray"
+                android:id="@+id/textView"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/locationIcon"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/photo"
+        android:padding="12dp"
+            android:id="@+id/relativeLayout">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/thumbsUp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_thumb_up"
+            android:tint="@android:color/darker_gray"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="12dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="aaaaaaaaaaaaaaaaaa"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/likes"
+            android:text="12 likes"
+            android:layout_alignBottom="@+id/thumbsUp"
+            android:layout_toRightOf="@+id/thumbsUp"
+            android:layout_toEndOf="@+id/thumbsUp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#test #landscape #nofilter"
             android:id="@+id/hashtags"
-            android:layout_below="@+id/photo"
-            android:padding="16dp"/>
+            android:layout_below="@+id/thumbsUp"/>
+
+
+    </RelativeLayout>
 
     </RelativeLayout>
 
