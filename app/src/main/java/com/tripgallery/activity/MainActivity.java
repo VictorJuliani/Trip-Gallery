@@ -9,25 +9,27 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.tripgallery.BuildVars;
+import com.tripgallery.Post;
 import com.tripgallery.R;
+import com.tripgallery.RecyclerViewAdapter;
 import com.tripgallery.manager.LocManager;
 import com.tripgallery.manager.PreferenceManager_;
 import com.tripgallery.util.ImageSelectedCallback;
@@ -41,6 +43,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -49,19 +52,12 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements LocationListener, ImageSelectedCallback
 {
 	@ViewById
-	protected Button publishBtn;
+	protected FloatingActionButton fab;
 
 	@ViewById
-	protected ImageView publishImg;
-
-	@ViewById
-	protected LinearLayout photoInfo;
-
-	@ViewById
-	protected EditText tagTxt;
-
-	@ViewById
-	protected EditText locTxt;
+	protected RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerViewAdapter recyclerViewAdapter;
 
 	@Pref
 	protected PreferenceManager_ preferences;
@@ -79,8 +75,38 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	{
 		picker = new PhotoPicker(this, this);
 
-		LocManager loc = new LocManager(this, this);
+		final LocManager loc = new LocManager(this, this);
 		loc.start();
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    List<Post> posts = new ArrayList<Post>();
+                    for (ParseObject object : list) {
+                        String url = object.getParseFile("file").getUrl();
+                        int likes = 23;
+                        String hashtgs = object.getString("tags");
+                        String location = object.getString("locationText");
+                        Post post = new Post(url, likes, hashtgs, location);
+                        posts.add(post);
+                    }
+
+                    recyclerViewAdapter = new RecyclerViewAdapter(posts);
+                    recyclerView.setAdapter(recyclerViewAdapter);
+
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+//        recyclerViewAdapter = new RecyclerViewAdapter();
+//        recyclerView.setAdapter(recyclerViewAdapter);
     }
 
 	@Override
@@ -104,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		picker.onActivityResult(requestCode, resultCode, data);
 	}
 
-	@Click(R.id.publishBtn)
+	@Click(R.id.fab)
 	protected void pickPhoto()
 	{
 		PhotoPicker.showPhotoPickDialog(this, picker);
@@ -113,18 +139,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@Override
 	public void handleImage(ChosenImage image)
 	{
-		photoInfo.setVisibility(View.VISIBLE);
 		Bitmap bitMap = BitmapFactory.decodeFile(image.getFilePathOriginal());
-		publishImg.setImageBitmap(BitmapFactory.decodeFile(image.getFileThumbnailSmall()));
+//		publishImg.setImageBitmap(BitmapFactory.decodeFile(image.getFileThumbnailSmall()));
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		final ParseFile file;
+        double factor = 1080.0 / bitMap.getWidth();
+        int scaledHeight = (int) (bitMap.getHeight() * factor);
 
-		bitMap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        Bitmap.createScaledBitmap(bitMap, 1080, scaledHeight, false)
+              .compress(Bitmap.CompressFormat.JPEG, 50, stream);
 		file = new ParseFile(uuid, stream.toByteArray());
 
 		ParseGeoPoint point = null;
-		if (!TextUtils.isEmpty(cityName) && !cityName.equals(locTxt.getText().toString()))
+//		if (!TextUtils.isEmpty(cityName) && !cityName.equals(locTxt.getText().toString()))
+		if (!TextUtils.isEmpty(cityName) && !cityName.equals(""))
 		{
 			Address addr = getLocationByCity();
 
@@ -145,13 +174,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 			@Override
 			public void done(ParseException e)
 			{
-				ParseObject object = new ParseObject("Photo");
+				ParseObject object = new ParseObject("Post");
 				object.put("ownerId", preferences.userId().get());
 				object.put("file", file);
 
 				object.put("location", finalPoint);
-				if (!TextUtils.isEmpty(tagTxt.getText()))
-					object.put("tags", tagTxt.getText().toString());
+//				if (!TextUtils.isEmpty(tagTxt.getText()))
+//					object.put("tags", tagTxt.getText().toString());
+				if (!TextUtils.isEmpty(""))
+					object.put("tags", "");
 				else
 					object.put("tags", "");
 
@@ -186,10 +217,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	public void onLocationChanged(Location location)
 	{
 		this.currentLocation = location;
-		if (TextUtils.isEmpty(locTxt.getText()))
+//		if (TextUtils.isEmpty(locTxt.getText()))
+		if (TextUtils.isEmpty(""))
 		{
 			cityName = getCityByLocation();
-			locTxt.setText(cityName);
+//			locTxt.setText(cityName);
 		}
 	}
 
@@ -231,14 +263,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 	private Address getLocationByCity()
 	{
-		if (TextUtils.isEmpty(locTxt.getText()))
+		if (TextUtils.isEmpty(""))
 			return null;
 
 		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 		List<Address> addressList;
 		try
 		{
-			addressList = geocoder.getFromLocationName(locTxt.getText().toString(), 1);
+			addressList = geocoder.getFromLocationName("", 1);
 			if (addressList.size() > 0)
 				return addressList.get(0);
 		}
