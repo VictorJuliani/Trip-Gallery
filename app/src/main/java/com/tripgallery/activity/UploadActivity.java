@@ -48,16 +48,33 @@ public class UploadActivity extends AppCompatActivity {
             Toast.makeText(this, "Well... that's awkward. Something bad happened \uD83D\uDE30 Please try again later.", Toast.LENGTH_LONG).show();
             finish();
         }
-
-        Bitmap bitMap = BitmapFactory.decodeFile(filePath);
+        BitmapFactory.Options options = new BitmapFactory.Options();
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
         final ParseFile file;
-        double factor = 1080.0 / bitMap.getWidth();
-        int scaledHeight = (int) (bitMap.getHeight() * factor);
+        Bitmap bitMap;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        double factor;
+        int scaledHeight;
 
-        Bitmap.createScaledBitmap(bitMap, 1080, scaledHeight, false)
-                .compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        options.inJustDecodeBounds = true;
+        bitMap = BitmapFactory.decodeFile(filePath, options);
+        factor = 1080.0 / options.outWidth;
+        scaledHeight = (int) (options.outHeight * factor);
+        int inSampleSize = 1;
+
+        if (options.outWidth > 1080) {
+            final int halfWidth = options.outWidth / 2;
+
+            while ((halfWidth / inSampleSize) > 1080) {
+                inSampleSize *= 2;
+            }
+        }
+
+        options.inSampleSize = inSampleSize;
+        options.inJustDecodeBounds = false;
+
+        Bitmap.createScaledBitmap(BitmapFactory.decodeFile(filePath, options),1080,
+                scaledHeight, false).compress(Bitmap.CompressFormat.JPEG, 50, stream);
         file = new ParseFile(uuid, stream.toByteArray());
 
 //        ParseGeoPoint point = null;
