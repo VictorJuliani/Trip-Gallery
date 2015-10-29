@@ -2,8 +2,6 @@ package com.tripgallery.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,19 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ProgressCallback;
-import com.parse.SaveCallback;
-import com.tripgallery.BuildVars;
+import com.tripgallery.App;
 import com.tripgallery.Post;
 import com.tripgallery.R;
 import com.tripgallery.RecyclerViewAdapter;
@@ -42,11 +34,9 @@ import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity implements LocationListener, ImageSelectedCallback
@@ -70,10 +60,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     @InstanceState
 	protected String cityName;
 
+    private App app;
+
 	@AfterViews
 	protected void setup()
 	{
 		picker = new PhotoPicker(this, this);
+
+        app = (App) getApplication();
 
 		final LocManager loc = new LocManager(this, this);
 		loc.start();
@@ -139,90 +133,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@Override
 	public void handleImage(ChosenImage image)
 	{
-		Bitmap bitMap = BitmapFactory.decodeFile(image.getFilePathOriginal());
-//		publishImg.setImageBitmap(BitmapFactory.decodeFile(image.getFileThumbnailSmall()));
-		String uuid = UUID.randomUUID().toString().replace("-", "");
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		final ParseFile file;
-        double factor = 1080.0 / bitMap.getWidth();
-        int scaledHeight = (int) (bitMap.getHeight() * factor);
-
-        Bitmap.createScaledBitmap(bitMap, 1080, scaledHeight, false)
-              .compress(Bitmap.CompressFormat.JPEG, 50, stream);
-		file = new ParseFile(uuid, stream.toByteArray());
-
-		ParseGeoPoint point = null;
-//		if (!TextUtils.isEmpty(cityName) && !cityName.equals(locTxt.getText().toString()))
-		if (!TextUtils.isEmpty(cityName) && !cityName.equals(""))
-		{
-			Address addr = getLocationByCity();
-
-			if (addr == null)
-				showLocErrorMsg();
-			else
-				point = new ParseGeoPoint(addr.getLatitude(), addr.getLongitude());
-		}
-
-		if (point == null && currentLocation != null)
-			point = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-		else
-			showLocErrorMsg();
-
-		final ParseGeoPoint finalPoint = point;
-		file.saveInBackground(new SaveCallback()
-		{
-			@Override
-			public void done(ParseException e)
-			{
-				ParseObject object = new ParseObject("Post");
-				object.put("ownerId", preferences.userId().get());
-				object.put("file", file);
-
-				object.put("location", finalPoint);
-//				if (!TextUtils.isEmpty(tagTxt.getText()))
-//					object.put("tags", tagTxt.getText().toString());
-				if (!TextUtils.isEmpty(""))
-					object.put("tags", "");
-				else
-					object.put("tags", "");
-
-				object.saveInBackground(new SaveCallback()
-				{
-					@Override
-					public void done(ParseException e)
-					{
-                        if(e != null) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(),R.string.something_went_wrong,
-                                           Toast.LENGTH_LONG).show();
-
-                        } else {
-                            Log.d(BuildVars.LOG_TAG, getResources().getString(R.string.photo_upload_success));
-                            Log.d(BuildVars.LOG_TAG, file.getUrl());
-                        }
-					}
-				});
-
-			}
-		}, new ProgressCallback()
-		{
-			@Override
-			public void done(Integer integer)
-			{
-				Log.d(BuildVars.LOG_TAG, integer.toString());
-			}
-		});
+        Intent i = new Intent(this, UploadActivity_.class);
+        i.putExtra("FILE_PATH", image.getFilePathOriginal());
+        startActivity(i);
 	}
 
-	public void onLocationChanged(Location location)
-	{
-		this.currentLocation = location;
-//		if (TextUtils.isEmpty(locTxt.getText()))
-		if (TextUtils.isEmpty(""))
-		{
-			cityName = getCityByLocation();
-//			locTxt.setText(cityName);
-		}
+	public void onLocationChanged(Location location) {
+        app.setLocation(location);
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras)
