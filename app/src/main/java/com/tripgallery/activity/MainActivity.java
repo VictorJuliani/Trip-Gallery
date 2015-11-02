@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.widget.ImageView;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	protected RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerViewAdapter recyclerViewAdapter;
+
 
 	@Pref
 	protected PreferenceManager_ preferences;
