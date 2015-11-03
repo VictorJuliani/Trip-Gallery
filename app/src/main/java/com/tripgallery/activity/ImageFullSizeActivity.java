@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.tripgallery.R;
+import com.tripgallery.util.TouchImageView;
 
 public class ImageFullSizeActivity extends AppCompatActivity {
 
@@ -17,10 +18,11 @@ public class ImageFullSizeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String postUrl = intent.getExtras().getString("url");
 
-        ImageView fullSize = (ImageView) findViewById(R.id.imageView2);
+        TouchImageView fullSize = (TouchImageView) findViewById(R.id.imageView2);
 
         Picasso.with(this)
                 .load(postUrl)
                 .into(fullSize);
+        fullSize.setMaxZoom(4f);
     }
 }
