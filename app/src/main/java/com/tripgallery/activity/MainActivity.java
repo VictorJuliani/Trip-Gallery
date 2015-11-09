@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@ViewById
 	protected FloatingActionButton fab;
 
-	@ViewById
-	protected Toolbar toolbar;
+    @ViewById
+    protected Toolbar toolbar;
 
 	@ViewById
 	protected RecyclerView recyclerView;
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		picker = new PhotoPicker(this, this);
 
 		app = (App) getApplication();
+		setSupportActionBar(toolbar);
 
 		final LocManager loc = new LocManager(this, this);
 		loc.start();
@@ -85,42 +86,33 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
 
-		if (toolbar != null)
-			setSupportActionBar(toolbar);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    List<Post> posts = new ArrayList<Post>();
+                    for (ParseObject object : list) {
+                        String url = object.getParseFile("file").getUrl();
+                        int likes = 23;
+                        String hashtgs = object.getString("tags");
+                        String location = object.getString("locationText");
+                        Post post = new Post(url, likes, hashtgs, location);
+                        posts.add(post);
+                    }
 
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
-		query.findInBackground(new FindCallback<ParseObject>()
-		{
-			@Override
-			public void done(List<ParseObject> list, ParseException e)
-			{
-				if (e == null)
-				{
-					List<Post> posts = new ArrayList<Post>();
-					for (ParseObject object : list)
-					{
-						String url = object.getParseFile("file").getUrl();
-						int likes = 23;
-						String hashtgs = object.getString("tags");
-						String location = object.getString("locationText");
-						Post post = new Post(url, likes, hashtgs, location);
-						posts.add(post);
-					}
+                    recyclerViewAdapter = new RecyclerViewAdapter(posts);
+                    recyclerView.setAdapter(recyclerViewAdapter);
 
-					recyclerViewAdapter = new RecyclerViewAdapter(posts);
-					recyclerView.setAdapter(recyclerViewAdapter);
-
-				}
-				else
-				{
-					e.printStackTrace();
-				}
-			}
-		});
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
 
 //        recyclerViewAdapter = new RecyclerViewAdapter();
 //        recyclerView.setAdapter(recyclerViewAdapter);
-	}
+    }
 
 	@Override
 	public void onSaveInstanceState(Bundle outState)
@@ -152,14 +144,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@Override
 	public void handleImage(ChosenImage image)
 	{
-		Intent i = new Intent(this, UploadActivity_.class);
-		i.putExtra("FILE_PATH", image.getFilePathOriginal());
-		startActivity(i);
+        Intent i = new Intent(this, UploadActivity_.class);
+        i.putExtra("FILE_PATH", image.getFilePathOriginal());
+        startActivity(i);
 	}
 
-	public void onLocationChanged(Location location)
-	{
-		app.setLocation(location);
+	public void onLocationChanged(Location location) {
+        app.setLocation(location);
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras)

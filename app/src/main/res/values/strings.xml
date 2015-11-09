@@ -16,6 +16,8 @@
     <string name="tags">Tags</string>
     <string name="loc">Location</string>
     <string name="badLoc">Invalid location :(</string>
+    <string name="where_photo_taken">Where this photo was taken?</string>
+    <string name="done">Done</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>

@@ -4,15 +4,20 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
+import com.tripgallery.App;
 import com.tripgallery.BuildVars;
 import com.tripgallery.R;
 import com.tripgallery.manager.PreferenceManager_;
@@ -30,55 +35,59 @@ import java.util.UUID;
  */
 
 @EActivity(R.layout.activity_upload)
-public class UploadActivity extends AppCompatActivity
-{
-	@ViewById(R.id.photo)
-	protected ImageView photoView;
+public class UploadActivity extends AppCompatActivity {
+    private App app;
 
-	@Pref
-	protected PreferenceManager_ preferences;
+    @ViewById(R.id.photo)
+    protected ImageView photoView;
 
-	@AfterViews
-	protected void start()
-	{
-		Intent intent = getIntent();
-		String filePath = intent.getStringExtra("FILE_PATH");
-		if (filePath == null)
-		{
-			// TODO: emoji support starts on KitKat
-			Toast.makeText(this, "Well... that's awkward. Something bad happened \uD83D\uDE30 Please try again later.", Toast.LENGTH_LONG).show();
-			finish();
-		}
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		String uuid = UUID.randomUUID().toString().replace("-", "");
-		final ParseFile file;
-		Bitmap bitMap;
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		double factor;
-		int scaledHeight;
+    @ViewById
+    protected Toolbar toolbar;
 
-		options.inJustDecodeBounds = true;
-		bitMap = BitmapFactory.decodeFile(filePath, options);
-		factor = 1080.0 / options.outWidth;
-		scaledHeight = (int) (options.outHeight * factor);
-		int inSampleSize = 1;
 
-		if (options.outWidth > 1080)
-		{
-			final int halfWidth = options.outWidth / 2;
+    @Pref
+    protected PreferenceManager_ preferences;
 
-			while ((halfWidth / inSampleSize) > 1080)
-			{
-				inSampleSize *= 2;
-			}
-		}
+    @AfterViews
+    protected void start() {
+        app = (App) getApplication();
+        setSupportActionBar(toolbar);
 
-		options.inSampleSize = inSampleSize;
-		options.inJustDecodeBounds = false;
+        Intent intent = getIntent();
+        String filePath = intent.getStringExtra("FILE_PATH");
+        if(filePath == null) {
+            // TODO: emoji support starts on KitKat
+            Toast.makeText(this, "Well... that's awkward. Something bad happened \uD83D\uDE30 Please try again later.", Toast.LENGTH_LONG).show();
+            finish();
+        }
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        final ParseFile file;
+        Bitmap bitMap;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        double factor;
+        int scaledHeight;
 
-		Bitmap.createScaledBitmap(BitmapFactory.decodeFile(filePath, options), 1080,
-				scaledHeight, false).compress(Bitmap.CompressFormat.JPEG, 50, stream);
-		file = new ParseFile(uuid, stream.toByteArray());
+        options.inJustDecodeBounds = true;
+        bitMap = BitmapFactory.decodeFile(filePath, options);
+        factor = 1080.0 / options.outWidth;
+        scaledHeight = (int) (options.outHeight * factor);
+        int inSampleSize = 1;
+
+        if (options.outWidth > 1080) {
+            final int halfWidth = options.outWidth / 2;
+
+            while ((halfWidth / inSampleSize) > 1080) {
+                inSampleSize *= 2;
+            }
+        }
+
+        options.inSampleSize = inSampleSize;
+        options.inJustDecodeBounds = false;
+
+        Bitmap.createScaledBitmap(BitmapFactory.decodeFile(filePath, options),1080,
+                scaledHeight, false).compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        file = new ParseFile(uuid, stream.toByteArray());
 
 //        ParseGeoPoint point = null;
 ////		if (!TextUtils.isEmpty(cityName) && !cityName.equals(locTxt.getText().toString()))
@@ -98,18 +107,20 @@ public class UploadActivity extends AppCompatActivity
 //            showLocErrorMsg();
 
 //        final ParseGeoPoint finalPoint = point;
-		file.saveInBackground(new SaveCallback()
-		{
-			@Override
-			public void done(ParseException e)
-			{
-				Picasso.with(getApplicationContext()).load(file.getUrl()).into(photoView);
+        file.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Picasso.with(getApplicationContext()).load(file.getUrl()).into(photoView);
 
-//                ParseObject object = new ParseObject("Post");
-//                object.put("ownerId", preferences.userId().get());
-//                object.put("file", file);
-//
-//                object.put("geopoint", finalPoint);
+                ParseObject object = new ParseObject("Post");
+                object.put("ownerId", preferences.userId().get());
+                object.put("file", file);
+
+                ParseGeoPoint geoPoint = new ParseGeoPoint(app.getLocation().getLatitude(),
+                        app.getLocation().getLongitude());
+
+                object.put("geopoint", geoPoint);
+                object.put("location", app.getCurrentCity());
 ////				if (!TextUtils.isEmpty(tagTxt.getText()))
 ////					object.put("tags", tagTxt.getText().toString());
 //                if (!TextUtils.isEmpty(""))
@@ -134,15 +145,21 @@ public class UploadActivity extends AppCompatActivity
 //                    }
 //                });
 
-			}
-		}, new ProgressCallback()
-		{
-			@Override
-			public void done(Integer integer)
-			{
-				Log.d(BuildVars.LOG_TAG, integer.toString());
-			}
-		});
-	}
+            }
+        }, new ProgressCallback()
+        {
+            @Override
+            public void done(Integer integer)
+            {
+                Log.d(BuildVars.LOG_TAG, integer.toString());
+            }
+        });
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.upload, menu);
+
+        return true;
+    }
 }
