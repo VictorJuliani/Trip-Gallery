@@ -30,52 +30,55 @@ import java.util.UUID;
  */
 
 @EActivity(R.layout.activity_upload)
-public class UploadActivity extends AppCompatActivity {
+public class UploadActivity extends AppCompatActivity
+{
+	@ViewById(R.id.photo)
+	protected ImageView photoView;
 
+	@Pref
+	protected PreferenceManager_ preferences;
 
-    @ViewById(R.id.photo)
-    protected ImageView photoView;
+	@AfterViews
+	protected void start()
+	{
+		Intent intent = getIntent();
+		String filePath = intent.getStringExtra("FILE_PATH");
+		if (filePath == null)
+		{
+			// TODO: emoji support starts on KitKat
+			Toast.makeText(this, "Well... that's awkward. Something bad happened \uD83D\uDE30 Please try again later.", Toast.LENGTH_LONG).show();
+			finish();
+		}
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		String uuid = UUID.randomUUID().toString().replace("-", "");
+		final ParseFile file;
+		Bitmap bitMap;
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		double factor;
+		int scaledHeight;
 
-    @Pref
-    protected PreferenceManager_ preferences;
+		options.inJustDecodeBounds = true;
+		bitMap = BitmapFactory.decodeFile(filePath, options);
+		factor = 1080.0 / options.outWidth;
+		scaledHeight = (int) (options.outHeight * factor);
+		int inSampleSize = 1;
 
-    @AfterViews
-    protected void start() {
-        Intent intent = getIntent();
-        String filePath = intent.getStringExtra("FILE_PATH");
-        if(filePath == null) {
-            // TODO: emoji support starts on KitKat
-            Toast.makeText(this, "Well... that's awkward. Something bad happened \uD83D\uDE30 Please try again later.", Toast.LENGTH_LONG).show();
-            finish();
-        }
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        final ParseFile file;
-        Bitmap bitMap;
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        double factor;
-        int scaledHeight;
+		if (options.outWidth > 1080)
+		{
+			final int halfWidth = options.outWidth / 2;
 
-        options.inJustDecodeBounds = true;
-        bitMap = BitmapFactory.decodeFile(filePath, options);
-        factor = 1080.0 / options.outWidth;
-        scaledHeight = (int) (options.outHeight * factor);
-        int inSampleSize = 1;
+			while ((halfWidth / inSampleSize) > 1080)
+			{
+				inSampleSize *= 2;
+			}
+		}
 
-        if (options.outWidth > 1080) {
-            final int halfWidth = options.outWidth / 2;
+		options.inSampleSize = inSampleSize;
+		options.inJustDecodeBounds = false;
 
-            while ((halfWidth / inSampleSize) > 1080) {
-                inSampleSize *= 2;
-            }
-        }
-
-        options.inSampleSize = inSampleSize;
-        options.inJustDecodeBounds = false;
-
-        Bitmap.createScaledBitmap(BitmapFactory.decodeFile(filePath, options),1080,
-                scaledHeight, false).compress(Bitmap.CompressFormat.JPEG, 50, stream);
-        file = new ParseFile(uuid, stream.toByteArray());
+		Bitmap.createScaledBitmap(BitmapFactory.decodeFile(filePath, options), 1080,
+				scaledHeight, false).compress(Bitmap.CompressFormat.JPEG, 50, stream);
+		file = new ParseFile(uuid, stream.toByteArray());
 
 //        ParseGeoPoint point = null;
 ////		if (!TextUtils.isEmpty(cityName) && !cityName.equals(locTxt.getText().toString()))
@@ -95,10 +98,12 @@ public class UploadActivity extends AppCompatActivity {
 //            showLocErrorMsg();
 
 //        final ParseGeoPoint finalPoint = point;
-        file.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                Picasso.with(getApplicationContext()).load(file.getUrl()).into(photoView);
+		file.saveInBackground(new SaveCallback()
+		{
+			@Override
+			public void done(ParseException e)
+			{
+				Picasso.with(getApplicationContext()).load(file.getUrl()).into(photoView);
 
 //                ParseObject object = new ParseObject("Post");
 //                object.put("ownerId", preferences.userId().get());
@@ -129,15 +134,15 @@ public class UploadActivity extends AppCompatActivity {
 //                    }
 //                });
 
-            }
-        }, new ProgressCallback()
-        {
-            @Override
-            public void done(Integer integer)
-            {
-                Log.d(BuildVars.LOG_TAG, integer.toString());
-            }
-        });
-    }
+			}
+		}, new ProgressCallback()
+		{
+			@Override
+			public void done(Integer integer)
+			{
+				Log.d(BuildVars.LOG_TAG, integer.toString());
+			}
+		});
+	}
 
 }

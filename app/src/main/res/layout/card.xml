@@ -1,101 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v7.widget.CardView
+    android:id="@+id/cardView"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardView"
-    card_view:cardUseCompatPadding="true"
-    card_view:cardElevation="5dp"
     android:layout_marginLeft="6dp"
-    android:layout_marginRight="6dp">
+    android:layout_marginRight="6dp"
+    card_view:cardElevation="5dp"
+    card_view:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:scaleType="centerCrop"
-            android:id="@+id/photo"
             android:src="@drawable/example"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="vertical"
             android:layout_above="@+id/relativeLayout"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
             <View
                 android:id="@+id/subtitleBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/rectangle"
-                android:alpha="0.5" />
+                android:alpha="0.5"
+                android:background="@drawable/rectangle"/>
 
             <ImageView
+                android:id="@+id/locationIcon"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:id="@+id/locationIcon"
-                android:src="@drawable/ic_location"
-                android:tint="@android:color/darker_gray"
-                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginLeft="5dp" />
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_location"
+                android:tint="@android:color/darker_gray"/>
 
             <TextView
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="São Carlos"
-                android:textColor="@android:color/darker_gray"
-                android:id="@+id/textView"
                 android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/locationIcon"
                 android:layout_toRightOf="@+id/locationIcon"
+                android:text="São Carlos"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/darker_gray"
                 />
         </RelativeLayout>
 
         <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/photo"
-        android:padding="12dp"
-            android:id="@+id/relativeLayout">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:id="@+id/thumbsUp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_thumb_up"
-            android:tint="@android:color/darker_gray"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="12dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/likes"
-            android:text="12 likes"
-            android:layout_alignBottom="@+id/thumbsUp"
-            android:layout_toRightOf="@+id/thumbsUp"
-            android:layout_toEndOf="@+id/thumbsUp" />
+            android:layout_below="@+id/photo"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/thumbsUp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="12dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_thumb_up"
+                android:tint="@android:color/darker_gray"/>
+
+            <TextView
+                android:id="@+id/likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/thumbsUp"
+                android:layout_toEndOf="@+id/thumbsUp"
+                android:layout_toRightOf="@+id/thumbsUp"
+                android:text="12 likes"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="#test #landscape #nofilter"
-            android:id="@+id/hashtags"
-            android:layout_below="@+id/thumbsUp"/>
+            <TextView
+                android:id="@+id/hashtags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/thumbsUp"
+                android:text="#test #landscape #nofilter"/>
 
 
-    </RelativeLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 

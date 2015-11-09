@@ -14,11 +14,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
@@ -52,64 +52,75 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	protected FloatingActionButton fab;
 
 	@ViewById
-	protected RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private RecyclerViewAdapter recyclerViewAdapter;
+	protected Toolbar toolbar;
 
+	@ViewById
+	protected RecyclerView recyclerView;
+	private RecyclerView.LayoutManager layoutManager;
+	private RecyclerViewAdapter recyclerViewAdapter;
 
 	@Pref
 	protected PreferenceManager_ preferences;
 
 	private PhotoPicker picker;
 
-    @InstanceState
+	@InstanceState
 	protected Location currentLocation;
 
-    @InstanceState
+	@InstanceState
 	protected String cityName;
 
-    private App app;
+	private App app;
 
 	@AfterViews
 	protected void setup()
 	{
 		picker = new PhotoPicker(this, this);
 
-        app = (App) getApplication();
+		app = (App) getApplication();
 
 		final LocManager loc = new LocManager(this, this);
 		loc.start();
 
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+		layoutManager = new LinearLayoutManager(this);
+		recyclerView.setLayoutManager(layoutManager);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    List<Post> posts = new ArrayList<Post>();
-                    for (ParseObject object : list) {
-                        String url = object.getParseFile("file").getUrl();
-                        int likes = 23;
-                        String hashtgs = object.getString("tags");
-                        String location = object.getString("locationText");
-                        Post post = new Post(url, likes, hashtgs, location);
-                        posts.add(post);
-                    }
+		if (toolbar != null)
+			setSupportActionBar(toolbar);
 
-                    recyclerViewAdapter = new RecyclerViewAdapter(posts);
-                    recyclerView.setAdapter(recyclerViewAdapter);
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+		query.findInBackground(new FindCallback<ParseObject>()
+		{
+			@Override
+			public void done(List<ParseObject> list, ParseException e)
+			{
+				if (e == null)
+				{
+					List<Post> posts = new ArrayList<Post>();
+					for (ParseObject object : list)
+					{
+						String url = object.getParseFile("file").getUrl();
+						int likes = 23;
+						String hashtgs = object.getString("tags");
+						String location = object.getString("locationText");
+						Post post = new Post(url, likes, hashtgs, location);
+						posts.add(post);
+					}
 
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+					recyclerViewAdapter = new RecyclerViewAdapter(posts);
+					recyclerView.setAdapter(recyclerViewAdapter);
+
+				}
+				else
+				{
+					e.printStackTrace();
+				}
+			}
+		});
 
 //        recyclerViewAdapter = new RecyclerViewAdapter();
 //        recyclerView.setAdapter(recyclerViewAdapter);
-    }
+	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState)
@@ -141,13 +152,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@Override
 	public void handleImage(ChosenImage image)
 	{
-        Intent i = new Intent(this, UploadActivity_.class);
-        i.putExtra("FILE_PATH", image.getFilePathOriginal());
-        startActivity(i);
+		Intent i = new Intent(this, UploadActivity_.class);
+		i.putExtra("FILE_PATH", image.getFilePathOriginal());
+		startActivity(i);
 	}
 
-	public void onLocationChanged(Location location) {
-        app.setLocation(location);
+	public void onLocationChanged(Location location)
+	{
+		app.setLocation(location);
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras)
@@ -214,20 +226,24 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.options_menu, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.search);
+		MenuItem searchItem = menu.findItem(R.id.search);
 
-        SearchManager searchManager = (SearchManager) MainActivity.this.getSystemService(Context.SEARCH_SERVICE);
+		SearchManager searchManager = (SearchManager) MainActivity.this.getSystemService(Context.SEARCH_SERVICE);
 
-        SearchView searchView = null;
-        if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
-        }
-        return super.onCreateOptionsMenu(menu);	}
+		SearchView searchView = null;
+		if (searchItem != null)
+		{
+			searchView = (SearchView) searchItem.getActionView();
+		}
+		if (searchView != null)
+		{
+			searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
+		}
+		return super.onCreateOptionsMenu(menu);
+	}
 }

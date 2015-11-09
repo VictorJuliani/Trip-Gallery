@@ -217,7 +217,7 @@ public class WelcomeActivity extends AppCompatActivity implements FacebookCallba
 		{
 			long userId = result.data.getUserId();
 			Log.d(BuildVars.LOG_TAG, "twitter auth: success; user id: " + userId);
-			doLogin(false, userId, "Foo Bar"); //  TODO: get the user name (username != user name)
+			doLogin(false, userId, result.data.getUserName());
 		}
 
 		@Override
