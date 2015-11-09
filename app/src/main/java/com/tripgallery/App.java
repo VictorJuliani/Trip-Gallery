@@ -50,4 +50,7 @@ public class App extends Application
         return currentCity;
     }
 
+    public Location getLocation() {
+        return location;
+    }
 }
