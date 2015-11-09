@@ -16,24 +16,24 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:scaleType="centerCrop"
+            android:id="@+id/photo"
             android:src="@drawable/example"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:orientation="vertical"
             android:layout_above="@+id/relativeLayout"
-            android:layout_centerHorizontal="true"
-            android:orientation="vertical">
+            android:layout_centerHorizontal="true">
             <View
                 android:id="@+id/subtitleBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:alpha="0.5"
-                android:background="@drawable/rectangle"/>
+                android:background="@drawable/rectangle"
+                android:alpha="0.5" />
 
             <ImageView
                 android:id="@+id/locationIcon"
