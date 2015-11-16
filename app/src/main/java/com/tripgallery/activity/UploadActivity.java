@@ -5,9 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -44,6 +49,15 @@ public class UploadActivity extends AppCompatActivity {
     @ViewById
     protected Toolbar toolbar;
 
+    @ViewById
+    protected TextView noLocationWarning;
+
+    @ViewById
+    protected EditText locationET;
+
+    @ViewById
+    protected EditText hashtagsET;
+
 
     @Pref
     protected PreferenceManager_ preferences;
@@ -52,6 +66,50 @@ public class UploadActivity extends AppCompatActivity {
     protected void start() {
         app = (App) getApplication();
         setSupportActionBar(toolbar);
+
+        noLocationWarning.setText(getString(R.string.no_location_warning, app.getCurrentCity()));
+
+        hashtagsET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            int lastLength = 0;
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = hashtagsET.getText().toString();
+
+                if (text.length() < lastLength) {
+                    lastLength = text.length();
+                    return;
+                }
+                lastLength = text.length();
+
+                if (text.length() != 0 && text.charAt(text.length() - 1) == ' ') {
+                    if (!text.contains("# ")) {
+                        hashtagsET.setText(text + "#");
+                        hashtagsET.setSelection(hashtagsET.length());
+                    }
+                }
+            }
+        });
+
+        hashtagsET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    if (hashtagsET.getText().toString().trim().length() == 0) {
+                        hashtagsET.setText("#");
+                        hashtagsET.setSelection(1);
+                    }
+                }
+            }
+        });
 
         Intent intent = getIntent();
         String filePath = intent.getStringExtra("FILE_PATH");
