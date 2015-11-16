@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -19,7 +20,12 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -88,27 +94,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
         query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    List<Post> posts = new ArrayList<Post>();
-                    for (ParseObject object : list) {
-                        String url = object.getParseFile("file").getUrl();
-                        int likes = 23;
-                        String hashtgs = object.getString("tags");
-                        String location = object.getString("locationText");
-                        Post post = new Post(url, likes, hashtgs, location);
-                        posts.add(post);
-                    }
+			@Override
+			public void done(List<ParseObject> list, ParseException e) {
+				if (e == null) {
+					List<Post> posts = new ArrayList<Post>();
+					for (ParseObject object : list) {
+						String url = object.getParseFile("file").getUrl();
+						int likes = 23;
+						String hashtgs = object.getString("tags");
+						String location = object.getString("locationText");
+						Post post = new Post(url, likes, hashtgs, location);
+						posts.add(post);
+					}
 
-                    recyclerViewAdapter = new RecyclerViewAdapter(posts);
-                    recyclerView.setAdapter(recyclerViewAdapter);
+					recyclerViewAdapter = new RecyclerViewAdapter(posts);
+					recyclerView.setAdapter(recyclerViewAdapter);
 
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+				} else {
+					e.printStackTrace();
+				}
+			}
+		});
 
 //        recyclerViewAdapter = new RecyclerViewAdapter();
 //        recyclerView.setAdapter(recyclerViewAdapter);
