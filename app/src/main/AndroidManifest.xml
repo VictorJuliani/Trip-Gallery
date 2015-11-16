@@ -62,6 +62,11 @@
         <activity android:name=".activity.ImageFullSizeActivity" >
 
         </activity>
+
+        <provider android:authorities="com.facebook.app.FacebookContentProvider505823559582988"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
+
     </application>
 
 </manifest>
