@@ -59,13 +59,11 @@
                 android:textColor="@android:color/darker_gray"
                 />
 
-            <Button
-                style="?android:attr/buttonStyleSmall"
+            <com.facebook.share.widget.ShareButton
+                android:id="@+id/shareButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Share"
-                android:id="@+id/button"
-                android:layout_alignTop="@+id/textView"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
 

@@ -9,6 +9,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +25,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -54,6 +59,8 @@ import java.util.Locale;
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity implements LocationListener, ImageSelectedCallback
 {
+	CallbackManager callbackManager;
+	ShareDialog shareDialog;
 	@ViewById
 	protected FloatingActionButton fab;
 
@@ -81,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@AfterViews
 	protected void setup()
 	{
+		FacebookSdk.sdkInitialize(getApplicationContext());
+		callbackManager = CallbackManager.Factory.create();
+		shareDialog = new ShareDialog(this);
+
+
+
 		picker = new PhotoPicker(this, this);
 
 		app = (App) getApplication();
@@ -139,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 		picker.onActivityResult(requestCode, resultCode, data);
+
 	}
 
 	@Click(R.id.fab)

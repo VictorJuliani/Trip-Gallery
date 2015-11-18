@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.squareup.picasso.Picasso;
 import com.tripgallery.activity.ImageFullSizeActivity;
 
@@ -41,7 +43,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 		public TextView hashtagsView;
 		public Context context;
 		public ImageView full_size;
-		public Button shareButton;
+		public ShareButton shareButton;
 
 		public ViewHolder(View v)
 		{
@@ -50,7 +52,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 			cardView = (CardView) v.findViewById(R.id.cardView);
 			photoView = (ImageView) v.findViewById(R.id.photo);
 			hashtagsView = (TextView) v.findViewById(R.id.hashtags);
-			shareButton = (Button) v.findViewById(R.id.button);
+			shareButton = (ShareButton) v.findViewById(R.id.shareButton);
 		}
 	}
 
@@ -112,6 +114,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 		SharePhotoContent content = new SharePhotoContent.Builder()
 				.addPhoto(photo)
 				.build();
+		holder.shareButton.setShareContent(content);
+//		ShareDialog.show(activityOrFragment, content);
+//		ShareApi.share(content, null);
 
 	}
 }
