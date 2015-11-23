@@ -3,9 +3,6 @@ package com.tripgallery;
 import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,15 +12,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
-import com.facebook.share.widget.ShareButton;
-import com.facebook.share.widget.ShareDialog;
 import com.squareup.picasso.Picasso;
 import com.tripgallery.activity.ImageFullSizeActivity;
-import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 /**
@@ -46,9 +37,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 		public ImageView photoView;
 		public TextView hashtagsView;
 		public Context context;
-		public ImageView full_size;
-		public ShareButton shareButton;
-		public Button tweetButton;
+		public Button shareButton;
 
 		public ViewHolder(View v)
 		{
@@ -57,8 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 			cardView = (CardView) v.findViewById(R.id.cardView);
 			photoView = (ImageView) v.findViewById(R.id.photo);
 			hashtagsView = (TextView) v.findViewById(R.id.hashtags);
-			shareButton = (ShareButton) v.findViewById(R.id.shareButton);
-			tweetButton = (Button) v.findViewById(R.id.tweetButton);
+			shareButton = (Button) v.findViewById(R.id.shareButton);
 		}
 	}
 
@@ -84,29 +72,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 		holder.hashtagsView.setText(post.hashtags);
 
-		holder.photoView.setOnClickListener(new View.OnClickListener() {
+		holder.photoView.setOnClickListener(new View.OnClickListener()
+		{
 			@Override
-			public void onClick(View view) {
+			public void onClick(View view)
+			{
 				Intent intent = new Intent(holder.context, ImageFullSizeActivity.class);
 				intent.putExtra("url", post.url);
 				holder.context.startActivity(intent);
-
-				//zoomImageFromThumb(holder.photoView, post.url, holder.context, expandedImageView, holder.cardView);
 			}
 		});
 
-		holder.shareButton.setOnClickListener(new View.OnClickListener() {
+		holder.shareButton.setOnClickListener(new View.OnClickListener()
+		{
 			@Override
-			public void onClick(View v) {
-				shareOnFacebook(holder);
-
-			}
-		});
-
-		holder.tweetButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				shareOnTwitter(holder);
+			public void onClick(View v)
+			{
+				holder.photoView.buildDrawingCache();
+				Intent intent = App.sharePhoto(holder.context, holder.photoView.getDrawingCache());
+				holder.context.startActivity(Intent.createChooser(intent, holder.context.getString(R.string.how_share)));
 			}
 		});
 	}
@@ -115,41 +99,5 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 	public int getItemCount()
 	{
 		return posts.size();
-	}
-
-	public void shareOnFacebook(final ViewHolder holder){
-
-		holder.photoView.buildDrawingCache();
-		Bitmap image = holder.photoView.getDrawingCache();
-		SharePhoto photo = new SharePhoto.Builder()
-				.setBitmap(image)
-				.build();
-		SharePhotoContent content = new SharePhotoContent.Builder()
-				.addPhoto(photo)
-				.build();
-		holder.shareButton.setShareContent(content);
-//		ShareDialog.show(activityOrFragment, content);
-//		ShareApi.share(content, null);
-
-	}
-
-	public void shareOnTwitter(final ViewHolder holder){
-		holder.photoView.buildDrawingCache();
-		Bitmap image = holder.photoView.getDrawingCache();
-		Uri imageUri = getImageUri(holder.context, image);
-		TweetComposer.Builder builder = new TweetComposer.Builder(holder.context)
-				.text("TripGallery!")
-				.image(imageUri)
-				;
-		builder.show();
-	}
-
-
-	public Uri getImageUri(Context inContext, Bitmap inImage) {
-
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-		String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-		return Uri.parse(path);
 	}
 }

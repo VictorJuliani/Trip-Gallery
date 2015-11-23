@@ -16,24 +16,23 @@
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:scaleType="centerCrop"
-            android:id="@+id/photo"
             android:src="@drawable/example"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="vertical"
             android:layout_above="@+id/relativeLayout"
             android:layout_centerHorizontal="true">
             <View
                 android:id="@+id/subtitleBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/rectangle"
-                android:alpha="0.5" />
+                android:alpha="0.5"
+                android:background="@drawable/rectangle"/>
 
             <ImageView
                 android:id="@+id/locationIcon"
@@ -59,24 +58,27 @@
                 android:textColor="@android:color/darker_gray"
                 />
 
-
-            <com.facebook.share.widget.ShareButton
-                android:id="@+id/shareButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+            <FrameLayout
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_centerVertical="true" android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tweet"
-                android:id="@+id/tweetButton"
-                android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/shareButton"
-                android:layout_toStartOf="@+id/shareButton" />
+                <Button
+                    android:id="@+id/shareButton"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"/>
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/share"
+                    android:tint="@android:color/darker_gray"/>
+            </FrameLayout>
 
         </RelativeLayout>
 

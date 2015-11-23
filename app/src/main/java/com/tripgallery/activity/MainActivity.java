@@ -4,12 +4,10 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -21,16 +19,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
-import com.facebook.share.widget.ShareDialog;
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -59,13 +48,11 @@ import java.util.Locale;
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity implements LocationListener, ImageSelectedCallback
 {
-	CallbackManager callbackManager;
-	ShareDialog shareDialog;
 	@ViewById
 	protected FloatingActionButton fab;
 
-    @ViewById
-    protected Toolbar toolbar;
+	@ViewById
+	protected Toolbar toolbar;
 
 	@ViewById
 	protected RecyclerView recyclerView;
@@ -88,12 +75,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@AfterViews
 	protected void setup()
 	{
-		FacebookSdk.sdkInitialize(getApplicationContext());
-		callbackManager = CallbackManager.Factory.create();
-		shareDialog = new ShareDialog(this);
-
-
-
 		picker = new PhotoPicker(this, this);
 
 		app = (App) getApplication();
@@ -105,13 +86,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
-        query.findInBackground(new FindCallback<ParseObject>() {
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+		query.findInBackground(new FindCallback<ParseObject>()
+		{
 			@Override
-			public void done(List<ParseObject> list, ParseException e) {
-				if (e == null) {
+			public void done(List<ParseObject> list, ParseException e)
+			{
+				if (e == null)
+				{
 					List<Post> posts = new ArrayList<Post>();
-					for (ParseObject object : list) {
+					for (ParseObject object : list)
+					{
 						String url = object.getParseFile("file").getUrl();
 						int likes = 23;
 						String hashtgs = object.getString("tags");
@@ -123,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 					recyclerViewAdapter = new RecyclerViewAdapter(posts);
 					recyclerView.setAdapter(recyclerViewAdapter);
 
-				} else {
+				}
+				else
+				{
 					e.printStackTrace();
 				}
 			}
@@ -131,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 //        recyclerViewAdapter = new RecyclerViewAdapter();
 //        recyclerView.setAdapter(recyclerViewAdapter);
-    }
+	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState)
@@ -152,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 		picker.onActivityResult(requestCode, resultCode, data);
-
 	}
 
 	@Click(R.id.fab)
@@ -164,13 +150,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@Override
 	public void handleImage(ChosenImage image)
 	{
-        Intent i = new Intent(this, UploadActivity_.class);
-        i.putExtra("FILE_PATH", image.getFilePathOriginal());
-        startActivity(i);
+		Intent i = new Intent(this, UploadActivity_.class);
+		i.putExtra("FILE_PATH", image.getFilePathOriginal());
+		startActivity(i);
 	}
 
-	public void onLocationChanged(Location location) {
-        app.setLocation(location);
+	public void onLocationChanged(Location location)
+	{
+		app.setLocation(location);
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras)

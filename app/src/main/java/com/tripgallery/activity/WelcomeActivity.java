@@ -87,7 +87,7 @@ public class WelcomeActivity extends AppCompatActivity implements FacebookCallba
 			finish();
 		}
 
-		facebookLoginButton.setReadPermissions("public_profile, email, publish_actions");
+		facebookLoginButton.setReadPermissions("public_profile, email");
 
 		// Callback registration
 		facebookLoginButton.registerCallback(callbackManager, this);

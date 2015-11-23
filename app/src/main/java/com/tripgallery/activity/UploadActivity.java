@@ -99,16 +99,20 @@ public class UploadActivity extends AppCompatActivity {
             }
         });
 
-        hashtagsET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    if (hashtagsET.getText().toString().trim().length() == 0) {
-                        hashtagsET.setText("#");
-                        hashtagsET.setSelection(1);
-                    }
-                }
-            }
+        hashtagsET.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+	        @Override
+	        public void onFocusChange(View v, boolean hasFocus)
+	        {
+		        if (hasFocus)
+		        {
+			        if (hashtagsET.getText().toString().trim().length() == 0)
+			        {
+				        hashtagsET.setText("#");
+				        hashtagsET.setSelection(1);
+			        }
+		        }
+	        }
         });
 
         Intent intent = getIntent();
@@ -215,9 +219,9 @@ public class UploadActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.upload, menu);
-
-        return true;
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+	    getMenuInflater().inflate(R.menu.upload, menu);
+	    return true;
     }
 }

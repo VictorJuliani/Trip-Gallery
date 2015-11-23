@@ -24,7 +24,11 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search on TripGallery</string>
-    <string name="no_location_warning">If you don\'t provide a location, \"%1s\" will be used.</string>
+    <string name="no_location_warning">If you don\'t provide a location, \"%1s\" will be used.
+    </string>
     <string name="hashtags">Hashtags</string>
+
+    <string name="how_share">How to share?</string>
+    <string name="share">Share</string>
 
 </resources>

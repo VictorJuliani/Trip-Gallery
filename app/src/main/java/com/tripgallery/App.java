@@ -1,12 +1,18 @@
 package com.tripgallery;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
+import android.provider.MediaStore;
 
 import com.parse.Parse;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -16,7 +22,6 @@ import java.util.Locale;
  */
 public class App extends Application
 {
-
 	private Location location;
 	private String currentCity;
 	private Geocoder geocoder;
@@ -33,24 +38,46 @@ public class App extends Application
 
 	}
 
-    public void setLocation(Location location) {
-        this.location = location;
+	public void setLocation(Location location)
+	{
+		this.location = location;
 
-        List<Address> list;
+		List<Address> list;
 
-        try {
-            currentCity = geocoder.getFromLocation(location.getLatitude(),
-                    location.getLongitude(), 1).get(0).getLocality();
-        } catch (IOException e) {
-            currentCity = null;
-        }
-    }
+		try
+		{
+			currentCity = geocoder.getFromLocation(location.getLatitude(),
+					location.getLongitude(), 1).get(0).getLocality();
+		}
+		catch (IOException e)
+		{
+			currentCity = null;
+		}
+	}
 
-    public String getCurrentCity() {
-        return currentCity;
-    }
+	public String getCurrentCity()
+	{
+		return currentCity;
+	}
 
-    public Location getLocation() {
-        return location;
-    }
+	public Location getLocation()
+	{
+		return location;
+	}
+
+	public static Intent sharePhoto(Context ctx, Bitmap image)
+	{
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+		String path = MediaStore.Images.Media.insertImage(ctx.getContentResolver(), image, "Title", null);
+
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("image/*");
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+		// Add data to the intent, the receiving app will decide what to do with it.
+		intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
+
+		return intent;
+	}
 }
