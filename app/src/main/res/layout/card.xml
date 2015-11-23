@@ -59,6 +59,7 @@
                 android:textColor="@android:color/darker_gray"
                 />
 
+
             <com.facebook.share.widget.ShareButton
                 android:id="@+id/shareButton"
                 android:layout_width="wrap_content"
@@ -66,6 +67,15 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tweet"
+                android:id="@+id/tweetButton"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/shareButton"
+                android:layout_toStartOf="@+id/shareButton" />
 
 
         </RelativeLayout>
