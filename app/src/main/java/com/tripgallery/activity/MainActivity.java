@@ -87,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 		layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
+
+		if(!init)
+			initFeed();
 	}
 
 	@Override
@@ -129,10 +132,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		app.setLocation(location);
 		if(!init)
 		{
-			init = true;
-			ParseGeoPoint geoPoint = new ParseGeoPoint(app.getLocation().getLatitude(), app.getLocation().getLongitude());
-			recyclerViewAdapter = new RecyclerViewAdapter(loadImages(geoPoint, null));
-			recyclerView.setAdapter(recyclerViewAdapter);
+			initFeed();
 		}
 	}
 
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 	private Address getLocationByCity(String name)
 	{
-		if (TextUtils.isEmpty(""))
+		if (TextUtils.isEmpty(name))
 			return null;
 
 		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		final List<Post> posts = new ArrayList<Post>();
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
 		if(geoPoint != null)
-			query.whereWithinKilometers("geopoint", geoPoint, 2);
+			query.whereWithinKilometers("location", geoPoint, 10);
 		if(tag != null)
 			query.whereContains("tags", tag);
 		query.findInBackground(new FindCallback<ParseObject>() {
@@ -266,5 +266,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		});
 
 		return posts;
+	}
+
+	private void initFeed()
+	{
+		init = true;
+		ParseGeoPoint geoPoint = new ParseGeoPoint(app.getLocation().getLatitude(), app.getLocation().getLongitude());
+		recyclerViewAdapter = new RecyclerViewAdapter(loadImages(geoPoint, null));
+		recyclerView.setAdapter(recyclerViewAdapter);
 	}
 }
