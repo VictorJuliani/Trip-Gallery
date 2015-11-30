@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.tripgallery.App;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	protected String cityName;
 
 	private App app;
+	private boolean init = false;
 
 	@AfterViews
 	protected void setup()
@@ -85,39 +87,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 		layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
-
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
-		query.findInBackground(new FindCallback<ParseObject>()
-		{
-			@Override
-			public void done(List<ParseObject> list, ParseException e)
-			{
-				if (e == null)
-				{
-					List<Post> posts = new ArrayList<Post>();
-					for (ParseObject object : list)
-					{
-						String url = object.getParseFile("file").getUrl();
-						int likes = 23;
-						String hashtgs = object.getString("tags");
-						String location = object.getString("locationText");
-						Post post = new Post(url, likes, hashtgs, location);
-						posts.add(post);
-					}
-
-					recyclerViewAdapter = new RecyclerViewAdapter(posts);
-					recyclerView.setAdapter(recyclerViewAdapter);
-
-				}
-				else
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-
-//        recyclerViewAdapter = new RecyclerViewAdapter();
-//        recyclerView.setAdapter(recyclerViewAdapter);
 	}
 
 	@Override
@@ -158,6 +127,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	public void onLocationChanged(Location location)
 	{
 		app.setLocation(location);
+		if(!init)
+		{
+			init = true;
+			ParseGeoPoint geoPoint = new ParseGeoPoint(app.getLocation().getLatitude(), app.getLocation().getLongitude());
+			recyclerViewAdapter = new RecyclerViewAdapter(loadImages(geoPoint, null));
+			recyclerView.setAdapter(recyclerViewAdapter);
+		}
 	}
 
 	public void onStatusChanged(String provider, int status, Bundle extras)
@@ -173,6 +149,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	public void onProviderDisabled(String provider)
 	{
 		// ignore
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+		if(Intent.ACTION_SEARCH.equals(intent.getAction()))
+		{
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			List<Post> posts = loadImages(null, query);
+			Address loc = getLocationByCity(query);
+			if(loc != null)
+			{
+				ParseGeoPoint geoPoint = new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+				posts.addAll(loadImages(geoPoint, null));
+			}
+
+			recyclerViewAdapter = new RecyclerViewAdapter(posts);
+			recyclerView.setAdapter(recyclerViewAdapter);
+		}
 	}
 
 	private String getCityByLocation()
@@ -196,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		return null;
 	}
 
-	private Address getLocationByCity()
+	private Address getLocationByCity(String name)
 	{
 		if (TextUtils.isEmpty(""))
 			return null;
@@ -205,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		List<Address> addressList;
 		try
 		{
-			addressList = geocoder.getFromLocationName("", 1);
+			addressList = geocoder.getFromLocationName(name, 1);
 			if (addressList.size() > 0)
 				return addressList.get(0);
 		}
@@ -243,5 +238,33 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 			searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
 		}
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	private List<Post> loadImages(ParseGeoPoint geoPoint, String tag)
+	{
+		final List<Post> posts = new ArrayList<Post>();
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+		if(geoPoint != null)
+			query.whereWithinKilometers("geopoint", geoPoint, 2);
+		if(tag != null)
+			query.whereContains("tags", tag);
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> list, ParseException e) {
+				if (e == null)
+				{
+					for (ParseObject object : list) {
+						String url = object.getParseFile("file").getUrl();
+						int likes = 23;
+						String hashtgs = object.getString("tags");
+						String location = object.getString("locationText");
+						Post post = new Post(url, likes, hashtgs, location);
+						posts.add(post);
+					}
+				}
+			}
+		});
+
+		return posts;
 	}
 }
