@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
 
-		if(!init)
+		if (!init && app.getLocation() != null)
 			initFeed();
 	}
 
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	public void onLocationChanged(Location location)
 	{
 		app.setLocation(location);
-		if(!init)
+		if (!init)
 		{
 			initFeed();
 		}
@@ -154,12 +154,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	@Override
 	protected void onNewIntent(Intent intent)
 	{
-		if(Intent.ACTION_SEARCH.equals(intent.getAction()))
+		if (Intent.ACTION_SEARCH.equals(intent.getAction()))
 		{
 			String query = intent.getStringExtra(SearchManager.QUERY);
 			List<Post> posts = loadImages(null, query);
 			Address loc = getLocationByCity(query);
-			if(loc != null)
+			if (loc != null)
 			{
 				ParseGeoPoint geoPoint = new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
 				posts.addAll(loadImages(geoPoint, null));
@@ -244,16 +244,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	{
 		final List<Post> posts = new ArrayList<Post>();
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
-		if(geoPoint != null)
+		if (geoPoint != null)
 			query.whereWithinKilometers("location", geoPoint, 10);
-		if(tag != null)
+		if (tag != null)
 			query.whereContains("tags", tag);
-		query.findInBackground(new FindCallback<ParseObject>() {
+		query.findInBackground(new FindCallback<ParseObject>()
+		{
 			@Override
-			public void done(List<ParseObject> list, ParseException e) {
+			public void done(List<ParseObject> list, ParseException e)
+			{
 				if (e == null)
 				{
-					for (ParseObject object : list) {
+					for (ParseObject object : list)
+					{
 						String url = object.getParseFile("file").getUrl();
 						int likes = 23;
 						String hashtgs = object.getString("tags");
