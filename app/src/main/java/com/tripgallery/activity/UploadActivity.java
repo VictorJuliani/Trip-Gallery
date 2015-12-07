@@ -62,6 +62,8 @@ public class UploadActivity extends AppCompatActivity {
     @Pref
     protected PreferenceManager_ preferences;
 
+    private ParseFile file;
+
     @AfterViews
     protected void start() {
         app = (App) getApplication();
@@ -124,14 +126,13 @@ public class UploadActivity extends AppCompatActivity {
         }
         BitmapFactory.Options options = new BitmapFactory.Options();
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        final ParseFile file;
-        Bitmap bitMap;
+
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         double factor;
         int scaledHeight;
 
         options.inJustDecodeBounds = true;
-        bitMap = BitmapFactory.decodeFile(filePath, options);
+        BitmapFactory.decodeFile(filePath, options);
         factor = 1080.0 / options.outWidth;
         scaledHeight = (int) (options.outHeight * factor);
         int inSampleSize = 1;
@@ -151,24 +152,6 @@ public class UploadActivity extends AppCompatActivity {
                 scaledHeight, false).compress(Bitmap.CompressFormat.JPEG, 50, stream);
         file = new ParseFile(uuid, stream.toByteArray());
 
-//        ParseGeoPoint point = null;
-////		if (!TextUtils.isEmpty(cityName) && !cityName.equals(locTxt.getText().toString()))
-//        if (!TextUtils.isEmpty(cityName) && !cityName.equals(""))
-//        {
-//            Address addr = getLocationByCity();
-//
-//            if (addr == null)
-//                showLocErrorMsg();
-//            else
-//                point = new ParseGeoPoint(addr.getLatitude(), addr.getLongitude());
-//        }
-//
-//        if (point == null && currentLocation != null)
-//            point = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-//        else
-//            showLocErrorMsg();
-
-//        final ParseGeoPoint finalPoint = point;
         file.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -183,30 +166,6 @@ public class UploadActivity extends AppCompatActivity {
 
                 object.put("geopoint", geoPoint);
                 object.put("location", app.getCurrentCity());
-////				if (!TextUtils.isEmpty(tagTxt.getText()))
-////					object.put("tags", tagTxt.getText().toString());
-//                if (!TextUtils.isEmpty(""))
-//                    object.put("tags", "");
-//                else
-//                    object.put("tags", "");
-//
-//                object.saveInBackground(new SaveCallback()
-//                {
-//                    @Override
-//                    public void done(ParseException e)
-//                    {
-//                        if(e != null) {
-//                            e.printStackTrace();
-//                            Toast.makeText(getApplicationContext(), R.string.something_went_wrong,
-//                                    Toast.LENGTH_LONG).show();
-//
-//                        } else {
-//                            Log.d(BuildVars.LOG_TAG, getResources().getString(R.string.photo_upload_success));
-//                            Log.d(BuildVars.LOG_TAG, file.getUrl());
-//                        }
-//                    }
-//                });
-
             }
         }, new ProgressCallback()
         {
