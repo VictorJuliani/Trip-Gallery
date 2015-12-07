@@ -89,35 +89,11 @@
             android:layout_below="@+id/photo"
             android:padding="12dp">
 
-            <ImageView
-                android:id="@+id/thumbsUp"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginBottom="12dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/ic_thumb_up"
-                android:tint="@android:color/darker_gray"/>
-
-            <TextView
-                android:id="@+id/likes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/thumbsUp"
-                android:layout_toEndOf="@+id/thumbsUp"
-                android:layout_toRightOf="@+id/thumbsUp"
-                android:text="12 likes"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-
             <TextView
                 android:id="@+id/hashtags"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/thumbsUp"
                 android:text="#test #landscape #nofilter"/>
-
 
         </RelativeLayout>
 
