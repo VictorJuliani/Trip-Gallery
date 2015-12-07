@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 						String url = object.getParseFile("file").getUrl();
 						int likes = 23;
 						String hashtgs = object.getString("tags");
-						String location = object.getString("locationText");
+						String location = object.getString("locationLabel");
 						Post post = new Post(url, likes, hashtgs, location);
 						posts.add(post);
 					}
