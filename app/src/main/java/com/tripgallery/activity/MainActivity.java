@@ -172,16 +172,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		{
             this.search = true;
 			String query = intent.getStringExtra(SearchManager.QUERY);
-			List<Post> posts = loadImages(null, query);
+			loadImages(null, query, false);
 			Address loc = getLocationByCity(query);
 			if (loc != null)
 			{
 				ParseGeoPoint geoPoint = new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
-				posts.addAll(loadImages(geoPoint, null));
+				loadImages(geoPoint, null, true);
 			}
 
-			recyclerViewAdapter = new RecyclerViewAdapter(posts);
-			recyclerView.setAdapter(recyclerViewAdapter);
             this.searchView.clearFocus();
 		}
 	}
@@ -259,14 +257,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	private List<Post> loadImages(ParseGeoPoint geoPoint, String tag)
+	private List<Post> loadImages(ParseGeoPoint geoPoint, String hashtags, final boolean append)
 	{
 		final List<Post> posts = new ArrayList<Post>();
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
 		if (geoPoint != null)
 			query.whereWithinKilometers("location", geoPoint, 10);
-		if (tag != null)
-			query.whereContains("tags", tag);
+		if (hashtags != null)
+			query.whereContains("hashtags", hashtags);
 		query.findInBackground(new FindCallback<ParseObject>()
 		{
 			@Override
@@ -278,13 +276,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 					{
 						String url = object.getParseFile("file").getUrl();
 						int likes = 23;
-						String hashtgs = object.getString("tags");
+						String hashtags = object.getString("hashtags");
 						String location = object.getString("locationLabel");
-						Post post = new Post(url, likes, hashtgs, location);
+						Post post = new Post(url, likes, hashtags, location);
 						posts.add(post);
 					}
 
-                    recyclerViewAdapter.put(posts, false);
+                    recyclerViewAdapter.put(posts, append);
+
 				}
 			}
 		});
@@ -297,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		ParseGeoPoint geoPoint = new ParseGeoPoint(app.getLocation().getLatitude(), app.getLocation().getLongitude());
         recyclerViewAdapter = new RecyclerViewAdapter();
         recyclerView.setAdapter(recyclerViewAdapter);
-		loadImages(geoPoint, null);
+		loadImages(geoPoint, null, false);
 		init = true;
 	}
 
