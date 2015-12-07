@@ -108,17 +108,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 		return posts.size();
 	}
 
-    public void put(List<Post> posts, boolean backup) {
-        if (backup) {
-            this.backup = this.posts;
+    public void put(List<Post> posts, boolean append) {
+        if (append) {
+            this.posts.addAll(posts);
+        } else {
+            this.posts = posts;
         }
-        this.posts = posts;
+
+        if (this.backup == null) {
+            this.backup = new ArrayList<>(this.posts);
+        }
+
         this.notifyDataSetChanged();
     }
 
     public void restore() {
         this.posts = this.backup;
-        this.backup = null;
         this.notifyDataSetChanged();
     }
 }
