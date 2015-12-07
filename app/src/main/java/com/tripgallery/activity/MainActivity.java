@@ -20,7 +20,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
@@ -118,10 +117,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
         if (requestCode == 666) {
             if (resultCode == Activity.RESULT_OK) {
-                // recyclerViewAdapter.update() TODO
-                Toast.makeText(this, "^~^", Toast.LENGTH_SHORT).show();
+                this.recyclerViewAdapter = new RecyclerViewAdapter();
+                this.recyclerView.swapAdapter(this.recyclerViewAdapter, true);
+                this.init = false;
+                this.initFeed();
             }
-
         } else {
             picker.onActivityResult(requestCode, resultCode, data);
         }
