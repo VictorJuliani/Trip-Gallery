@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tripgallery.activity.ImageFullSizeActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 	 */
 
 	private List<Post> posts;
+    private List<Post> backup;
 
 	public static class ViewHolder extends RecyclerView.ViewHolder
 	{
@@ -56,6 +58,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 	{
 		this.posts = posts;
 	}
+
+    public RecyclerViewAdapter() {
+        this.posts = new ArrayList<>();
+    }
 
 	public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
 	{
@@ -101,4 +107,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 	{
 		return posts.size();
 	}
+
+    public void put(List<Post> posts, boolean backup) {
+        if (backup) {
+            this.backup = this.posts;
+        }
+        this.posts = posts;
+        this.notifyDataSetChanged();
+    }
+
+    public void restore() {
+        this.posts = this.backup;
+        this.backup = null;
+        this.notifyDataSetChanged();
+    }
 }

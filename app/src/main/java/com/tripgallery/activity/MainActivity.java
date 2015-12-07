@@ -275,6 +275,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 						Post post = new Post(url, likes, hashtgs, location);
 						posts.add(post);
 					}
+
+                    recyclerViewAdapter.put(posts, false);
 				}
 			}
 		});
@@ -284,9 +286,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 	private void initFeed()
 	{
-		init = true;
 		ParseGeoPoint geoPoint = new ParseGeoPoint(app.getLocation().getLatitude(), app.getLocation().getLongitude());
-		recyclerViewAdapter = new RecyclerViewAdapter(loadImages(geoPoint, null));
-		recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerViewAdapter = new RecyclerViewAdapter();
+        recyclerView.setAdapter(recyclerViewAdapter);
+		loadImages(geoPoint, null);
+		init = true;
 	}
 }
