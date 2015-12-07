@@ -19,8 +19,7 @@
             android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/example"/>
+            android:scaleType="centerCrop"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -53,7 +52,6 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/locationIcon"
                 android:layout_toRightOf="@+id/locationIcon"
-                android:text="São Carlos"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/darker_gray"
                 />
@@ -92,8 +90,7 @@
             <TextView
                 android:id="@+id/hashtags"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#test #landscape #nofilter"/>
+                android:layout_height="wrap_content"/>
 
         </RelativeLayout>
 
