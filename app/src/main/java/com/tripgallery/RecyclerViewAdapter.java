@@ -35,6 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 	{
 		public CardView cardView;
 		public ImageView photoView;
+        public TextView locationLabelView;
 		public TextView hashtagsView;
 		public Context context;
 		public Button shareButton;
@@ -47,6 +48,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 			photoView = (ImageView) v.findViewById(R.id.photo);
 			hashtagsView = (TextView) v.findViewById(R.id.hashtags);
 			shareButton = (Button) v.findViewById(R.id.shareButton);
+            locationLabelView = (TextView) v.findViewById(R.id.locationLabel);
 		}
 	}
 
@@ -66,11 +68,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 	{
 		final Post post = posts.get(position);
 
-		Picasso p = Picasso.with(holder.context);
-		//p.setIndicatorsEnabled(true);
-		p.load(post.url).into(holder.photoView);
+		Picasso.with(holder.context).load(post.url).into(holder.photoView);
 
 		holder.hashtagsView.setText(post.hashtags);
+		holder.locationLabelView.setText(post.location);
 
 		holder.photoView.setOnClickListener(new View.OnClickListener()
 		{
