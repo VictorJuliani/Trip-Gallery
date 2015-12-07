@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 	private App app;
 	private boolean init = false;
+    private boolean search;
+
+    private SearchView searchView;
 
 	@AfterViews
 	protected void setup()
@@ -167,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	{
 		if (Intent.ACTION_SEARCH.equals(intent.getAction()))
 		{
+            this.search = true;
 			String query = intent.getStringExtra(SearchManager.QUERY);
 			List<Post> posts = loadImages(null, query);
 			Address loc = getLocationByCity(query);
@@ -178,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 			recyclerViewAdapter = new RecyclerViewAdapter(posts);
 			recyclerView.setAdapter(recyclerViewAdapter);
+            this.searchView.clearFocus();
 		}
 	}
 
@@ -248,6 +253,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		{
 			searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
 		}
+
+        this.searchView = searchView;
+
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -292,4 +300,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 		loadImages(geoPoint, null);
 		init = true;
 	}
+
+    @Override
+    public void onBackPressed() {
+        if (this.search) {
+            this.search = false;
+            this.recyclerViewAdapter.restore();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
