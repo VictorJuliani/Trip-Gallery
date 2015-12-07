@@ -1,5 +1,6 @@
 package com.tripgallery.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.kbeanie.imagechooser.api.ChosenImage;
 import com.parse.FindCallback;
@@ -110,7 +112,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		picker.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 666) {
+            if (resultCode == Activity.RESULT_OK) {
+                // recyclerViewAdapter.update() TODO
+                Toast.makeText(this, "^~^", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            picker.onActivityResult(requestCode, resultCode, data);
+        }
 	}
 
 	@Click(R.id.fab)
@@ -124,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 	{
 		Intent i = new Intent(this, UploadActivity_.class);
 		i.putExtra("FILE_PATH", image.getFilePathOriginal());
-		startActivity(i);
+		startActivityForResult(i, 666);
 	}
 
 	public void onLocationChanged(Location location)

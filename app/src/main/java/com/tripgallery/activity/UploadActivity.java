@@ -1,14 +1,17 @@
 package com.tripgallery.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -170,8 +173,7 @@ public class UploadActivity extends AppCompatActivity {
         }, new ProgressCallback()
         {
             @Override
-            public void done(Integer integer)
-            {
+            public void done(Integer integer) {
                 Log.d(BuildVars.LOG_TAG, integer.toString());
             }
         });
@@ -182,5 +184,46 @@ public class UploadActivity extends AppCompatActivity {
     {
 	    getMenuInflater().inflate(R.menu.upload, menu);
 	    return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.actionDone) {
+            String locationLabel = locationET.getText().toString().trim();
+            ParseGeoPoint point;
+            Address address;
+            if (locationLabel.length() != 0) {
+                address = app.getLocationByCity(locationLabel);
+                point = new ParseGeoPoint(address.getLatitude(), address.getLongitude());
+            } else {
+                point = new ParseGeoPoint(app.getLocation().getLatitude(), app.getLocation().getLongitude());
+                locationLabel = app.getCurrentCity();
+            }
+
+            ParseObject post = new ParseObject("Post");
+            post.put("location", point);
+            post.put("locationLabel", locationLabel);
+            post.put("ownerId", preferences.userId().get());
+            post.put("hashtags", hashtagsET.getText().toString().trim());
+            post.put("file", file);
+
+            post.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Toast.makeText(UploadActivity.this,
+                                getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    } else {
+                        setResult(Activity.RESULT_OK);
+                        finish();
+                    }
+                }
+            });
+
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

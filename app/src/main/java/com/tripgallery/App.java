@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import com.parse.Parse;
 
@@ -79,5 +80,26 @@ public class App extends Application
 		intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
 
 		return intent;
+	}
+
+	public Address getLocationByCity(String name)
+	{
+		if (TextUtils.isEmpty(name))
+			return null;
+
+		Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+		List<Address> addressList;
+		try
+		{
+			addressList = geocoder.getFromLocationName(name, 1);
+			if (addressList.size() > 0)
+				return addressList.get(0);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }
