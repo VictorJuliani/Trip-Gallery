@@ -305,6 +305,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if (this.search) {
             this.search = false;
             this.recyclerViewAdapter.restore();
+            this.searchView.setQuery("", false);
+            this.searchView.setIconified(true);
         } else {
             super.onBackPressed();
         }
